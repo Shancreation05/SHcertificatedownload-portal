@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificate Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;700&family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+:root{--p:#8B1E1E;--p2:#c0392b;--bg:#fcf9f2;--card:#fff;--bd:#e6dfd1;--tx:#2d2a26;--mu:#6b655d;--soft:#f7f4ed}
+@media (prefers-color-scheme:dark){:root{--bg:#161413;--card:#221f1d;--bd:#3a3631;--tx:#efe9df;--mu:#a59d91;--soft:#2a2724}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI","Noto Sans Bengali",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;padding:14px;min-height:100vh;position:relative;overflow-x:hidden}
+.orb{position:fixed;border-radius:50%;filter:blur(70px);opacity:.28;z-index:0;pointer-events:none;animation:fl 14s ease-in-out infinite}
+.o1{width:300px;height:300px;background:#c0392b;top:-80px;left:-80px}.o2{width:260px;height:260px;background:#d4a017;bottom:-60px;right:-60px;animation-delay:-6s}
+@keyframes fl{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+@keyframes grad{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes zin{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,160,67,.6)}100%{box-shadow:0 0 0 10px rgba(46,160,67,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.c{position:relative;z-index:1;max-width:920px;margin:0 auto;background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.12);animation:up .6s}
+header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;color:#fff;background:linear-gradient(120deg,#8B1E1E,#c0392b,#5a1010,#8B1E1E);background-size:300% 300%;animation:grad 12s ease infinite}
+h1{font-size:15px;letter-spacing:.6px}header p{font-size:11px;opacity:.85;text-transform:uppercase}
+.hd{display:flex;align-items:center;gap:10px}.hd img{height:40px;border-radius:6px;background:#fff;padding:2px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,.18);margin-top:4px}
+.dot{width:9px;height:9px;border-radius:50%;background:#2ea043;animation:pulse 1.6s infinite}.dot.off{background:#e5534b;animation:none}
+.nav,.act{display:flex;gap:8px;flex-wrap:wrap}.act{margin-top:12px}
+.b{position:relative;overflow:hidden;background:var(--p);color:#fff;border:0;padding:9px 15px;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.b:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(139,30,30,.3)}.b:active{transform:scale(.97)}
+.b::after{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg)}.b:hover::after{left:140%;transition:left .6s}
+.bo{background:transparent;color:var(--tx);border:1px solid var(--bd)}header .bo{color:#fff;border-color:rgba(255,255,255,.5)}
+.tabs{display:flex;background:var(--soft);border-bottom:1px solid var(--bd)}
+.tab{flex:1;padding:13px 4px;font-size:13px;font-weight:600;color:var(--mu);background:none;border:0;cursor:pointer;transition:.25s}.tab.on{background:var(--p);color:#fff}
+.sec{padding:22px 18px;animation:up .5s}.sec h2{font-size:16px;margin-bottom:4px}.sec p.s{font-size:13px;color:var(--mu);margin-bottom:16px}
+.g{margin-bottom:14px}label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mu);margin-bottom:5px}
+input,select,textarea{width:100%;padding:11px;font-size:16px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font-family:inherit;transition:border .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--p);box-shadow:0 0 0 3px rgba(139,30,30,.15)}
+.sb{width:100%;background:linear-gradient(90deg,#8B1E1E,#c0392b);color:#fff;border:0;padding:14px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;transition:.2s}.sb:hover{filter:brightness(1.1)}.sb:disabled{opacity:.6}
+.err{color:#c0392b;font-size:13px;margin-bottom:10px;min-height:1px}.hide{display:none!important}
+.ok{background:#e6f4ea;color:#1e6b2f;padding:12px;border-radius:8px;font-weight:700;margin-bottom:10px;animation:zin .4s}
+.bad{background:#fdecea;color:#b3261e;padding:12px;border-radius:8px;font-weight:700;margin-bottom:10px;animation:zin .4s}
+.wait{background:#fff6e0;color:#8a5a00;padding:12px;border-radius:8px;font-weight:600;margin:10px 0;animation:zin .4s}
+.sp{display:inline-block;width:14px;height:14px;border:2px solid var(--p);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+.rv{animation:zin .6s;cursor:pointer}
+.cert{position:relative;text-align:center;background:#fff;color:#1a1a1a;overflow:hidden}
+.ci{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;height:100%}
+.cl{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;margin-bottom:.4em}.cl>div:nth-child(1){justify-self:start}.cl>div:nth-child(2){justify-self:center}.cl>div:nth-child(3){justify-self:end}.cl img{max-height:4.6em;max-width:7em}
+.qr{display:flex;flex-direction:column;align-items:center;font-size:.6em;color:#555;margin:.8em auto 0}.qr img,.qr canvas{width:100%!important;height:100%!important}
+.sgs{display:flex;flex-wrap:wrap;justify-content:space-around;gap:1em;margin-top:1em}.sgs>div{min-width:8em;font-size:.7em}
+.sgi{height:3em;display:flex;align-items:flex-end;justify-content:center}.sgi img{max-height:3em;max-width:9em}.sg{border-top:1px solid #333;padding-top:.2em;font-weight:bold;color:#444}
+video{width:100%;max-width:420px;border-radius:10px;background:#000}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.st{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}.Approved{background:#e6f4ea;color:#1e6b2f}.Pending{background:#fff6e0;color:#8a5a00}.Rejected{background:#fdecea;color:#b3261e}
+details{border:1px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:12px}summary{font-weight:700;font-size:13px;cursor:pointer}
+.im{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.im img{height:34px;border:1px solid var(--bd);background:#fff}.im input{width:auto;font-size:12px;padding:6px}
+.sgb{border:1px solid var(--bd);border-radius:8px;padding:10px;margin-bottom:10px}
+footer{text-align:center;padding:18px;border-top:1px solid var(--bd);background:var(--soft);font-size:12px;color:var(--mu)}
+footer .th{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:6px}
+#pa{position:absolute;left:-99999px;top:0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<div class="c">
+<header><div class="hd"><span id="hl"></span><div><h1 id="hT"></h1><p id="hS"></p><span class="pill"><i class="dot" id="dot"></i><span id="pst">...</span></span></div></div>
+<div class="nav"><button class="b bo" id="nP">Portal</button><button class="b bo" id="nA">Admin Panel</button></div></header>
+<div id="cfgerr" class="bad hide">Paste your Google Apps Script URL in the API line at the top of the script.</div>
+
+<div id="portal">
+ <div class="tabs"><button class="tab on" id="t1">Register</button><button class="tab" id="t2">Retrieve</button><button class="tab" id="t3">Verify / Scan</button></div>
+ <div class="sec">
+  <div id="v1"><h2>Student Registration</h2><p class="s">Enter details. One mobile number can register only once.</p>
+   <div id="closed" class="bad hide">Registration is currently closed.</div>
+   <div class="g hide" id="evg"><label>CERTIFICATE / EVENT</label><select id="evs"></select></div>
+   <div class="g"><label>FULL NAME (English / বাংলা)</label><input id="nm" placeholder="Full name"></div>
+   <div class="g"><label>নাম বাংলায় / NAME IN BENGALI (optional)</label><input id="nmb" placeholder="বাংলা সার্টিফিকেটের জন্য"></div>
+   <div class="g"><label>MOBILE NUMBER</label><input id="mb" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"></div>
+   <div class="g hide" id="phg"><label>YOUR PHOTO (optional)</label><input id="ph" type="file" accept="image/*"></div>
+   <div class="err" id="e1"></div><button class="sb" id="reg">Register &amp; Get Certificate</button></div>
+  <div id="v2" class="hide"><h2>Retrieve Certificate</h2><p class="s">Enter the registered mobile number.</p>
+   <div class="g"><label>MOBILE NUMBER</label><input id="rm" type="tel" inputmode="numeric" maxlength="10"></div>
+   <div class="err" id="e2"></div><button class="sb" id="ret">Find Certificate</button></div>
+  <div id="v3" class="hide"><h2>Verify Certificate</h2><p class="s">Enter Certificate ID / mobile number, or scan the QR code.</p>
+   <div class="g"><label>CERTIFICATE ID OR MOBILE</label><input id="vq" placeholder="e.g. NSS-2026-0001"></div>
+   <div class="err" id="e4"></div>
+   <div class="act" style="margin:0 0 12px"><button class="b" id="vbtn">Verify</button><button class="b bo" id="scan">📷 Scan QR</button><button class="b bo hide" id="stopscan">Stop</button></div>
+   <video id="vid" class="hide" muted></video><canvas id="cv" class="hide"></canvas>
+   <div id="vr"></div><div id="vout"></div></div>
+  <div id="out"></div>
+ </div>
+</div>
+
+<div id="admin" class="hide"><div class="sec">
+ <div id="lg"><h2>Admin Login</h2><p class="s">Enter the admin password.</p>
+  <div class="g"><label>PASSWORD</label><input id="pw" type="password"></div>
+  <div class="err" id="e3"></div><button class="sb" id="login">Login</button></div>
+ <div id="dash" class="hide">
+  <div class="act" style="margin:0 0 14px"><button class="b" id="tabS">Design &amp; Settings</button><button class="b bo" id="tabR">Students &amp; Downloads</button><button class="b bo" id="chpw">Change password</button><button class="b bo" id="lo">Logout</button></div>
+  <div id="pS"><div id="form"></div><div class="act"><button class="b" id="sv">Save Changes (to Google Sheet)</button><button class="b bo" id="bn">Fill Bengali sample text</button><button class="b bo" id="rs">Reset Defaults</button></div>
+   <h2 style="margin:18px 0 8px;font-size:14px">Live Preview</h2><div id="pv"></div></div>
+  <div id="pR" class="hide"><p id="cnt" class="s"></p>
+   <div class="act" style="margin:0 0 8px"><button class="b" id="addst">+ Add student</button><button class="b" id="apall">Approve all pending</button><select id="bl" style="width:auto;font-size:12px;padding:8px"><option value="en">Certificates in English</option><option value="bn">Certificates in বাংলা</option></select><select id="zf" style="width:auto;font-size:12px;padding:8px"><option value="pdf">ZIP of PDFs</option><option value="jpg">ZIP of JPGs</option><option value="png">ZIP of PNGs</option></select><button class="b" id="zip">Download ZIP</button><button class="b" id="pall">All in one PDF</button><button class="b bo" id="xls">Excel</button><button class="b" id="imp" onclick="document.getElementById('imf').click()">⬆ Import Excel/CSV</button><button class="b bo" id="tpl">Sample sheet</button><button class="b bo" id="csv">CSV</button><button class="b bo" id="clr">Clear All</button></div>
+   <p id="prog" style="font-size:12px;margin-bottom:6px"></p>
+   <div class="tw"><table><thead><tr><th>ID</th><th>Name</th><th>Mobile</th><th>Event</th><th>Date</th><th>Status</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
+   <input type="file" id="pf" accept="image/*" class="hide"><input type="file" id="imf" accept=".xlsx,.xls,.csv" class="hide"><div id="aout" style="margin-top:14px"></div></div>
+ </div>
+</div></div>
+
+<footer><div class="th" id="fT"></div><div id="fC"></div><div class="act" style="justify-content:center"><button class="b bo" id="voice">🔊 Play thank-you message</button></div></footer>
+</div>
+<div id="pa"></div>
+
+<script>
+/* >>> PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL BELOW <<< */
+var API='https://script.google.com/macros/s/AKfycbzaekKrNvKIIPUfbwUOWinzY9NivPLprVRsU2bznzURKzDoXJ0VFZ3zYjm2yOmV5M8o/exec';
+
+var PW='',CUR=null,qc=0,RECS=[],PHT=null,CE=0,PI=null;
+var DEFE={active:'on',heading:'CERTIFICATE OF PARTICIPATION',intro:'This is to certify that',pre:'has successfully participated in the',event:'DENGUE AWARENESS CAMPAIGN',
+org:'organized by Rishi Bankim Chandra Evening College, NSS Unit–I.',note:'In recognition of active participation and valuable contribution towards social responsibility.',
+dateLabel:'Date',dateText:'',placeLabel:'Place',placeText:'Kolkata',size:'A4L',cw:'297',ch:'210',font:"'Noto Serif Bengali',Georgia,serif",color:'#8B1E1E',border:'#4a1515',borderStyle:'double',
+bgColor:'#ffffff',bgImage:'',bgFade:'60',photoOn:'off',photoShape:'round',photoSize:'90',qrPos:'center',qrSize:'90',idPrefix:'NSS',idMode:'serial',idStart:'1',idDigits:'4',logoL:'',logoC:'',logoR:'',
+sigs:[{t:'TEACHER-IN-CHARGE',s:'RBC EVENING COLLEGE',img:''},{t:'PROGRAMME OFFICER',s:'NSS UNIT–I',img:''}]};
+var BNF={heading_bn:'অংশগ্রহণ সার্টিফিকেট',intro_bn:'এই মর্মে প্রত্যয়ন করা যাচ্ছে যে',pre_bn:'সফলভাবে অংশগ্রহণ করেছেন',event_bn:'ডেঙ্গু সচেতনতা অভিযান',org_bn:'আয়োজক: ঋষি বঙ্কিম চন্দ্র ইভনিং কলেজ, এনএসএস ইউনিট–১',note_bn:'সক্রিয় অংশগ্রহণ ও সামাজিক দায়বদ্ধতায় মূল্যবান অবদানের স্বীকৃতিস্বরূপ।',dateLabel_bn:'তারিখ',placeLabel_bn:'স্থান',placeText_bn:'কলকাতা'};
+var SBN=[['শিক্ষক-ইনচার্জ','ঋষি বঙ্কিম চন্দ্র ইভনিং কলেজ'],['প্রোগ্রাম অফিসার','এনএসএস ইউনিট–১']];
+Object.assign(DEFE,BNF);DEFE.sigs.forEach(function(g,i){g.t_bn=SBN[i][0];g.s_bn=SBN[i][1]});
+var LANG='en',CURT='',CURA=0;
+var EVK=Object.keys(DEFE);
+var DEF={portalActive:'on',autoApprove:'manual',fileName:'{name}-{id}',portalTitle:'OFFICIAL CERTIFICATE PORTAL',portalSub:'Rishi Bankim Chandra Evening College • NSS Unit-I',logoPortal:'',
+footerThanks:'Heartfelt thanks to everyone who participated.',footerCopy:'© {year} Rishi Bankim Chandra Evening College, NSS Unit-I. All rights reserved.',voiceUrl:'',voiceData:'',
+events:[Object.assign({id:'e1',name:'Dengue Awareness Campaign'},JSON.parse(JSON.stringify(DEFE)))]};
+var BN={portalTitle:'অফিসিয়াল সার্টিফিকেট পোর্টাল',footerThanks:'অংশগ্রহণের জন্য সবাইকে আন্তরিক ধন্যবাদ।',footerCopy:'© {year} ঋষি বঙ্কিম চন্দ্র ইভনিং কলেজ, এনএসএস ইউনিট–১। সর্বস্বত্ব সংরক্ষিত।'};
+var BNE={heading:'অংশগ্রহণ সার্টিফিকেট',intro:'এই মর্মে প্রত্যয়ন করা যাচ্ছে যে',pre:'সফলভাবে অংশগ্রহণ করেছেন',event:'ডেঙ্গু সচেতনতা অভিযান',org:'আয়োজক: ঋষি বঙ্কিম চন্দ্র ইভনিং কলেজ, এনএসএস ইউনিট–১',note:'সক্রিয় অংশগ্রহণ ও সামাজিক দায়বদ্ধতায় মূল্যবান অবদানের স্বীকৃতিস্বরূপ।',dateLabel:'তারিখ',placeLabel:'স্থান',placeText:'কলকাতা',font:"'Noto Serif Bengali',Georgia,serif"};
+var SIZES={A4L:[297,210],A4P:[210,297],A3L:[420,297],A3P:[297,420],A5L:[210,148],A5P:[148,210],LTL:[279,216],LTP:[216,279],SQ:[250,250]};
+var SZ=[['A4L','A4 Landscape'],['A4P','A4 Portrait'],['A3L','A3 Landscape'],['A3P','A3 Portrait'],['A5L','A5 Landscape'],['A5P','A5 Portrait'],['LTL','Letter Landscape'],['LTP','Letter Portrait'],['SQ','Square'],['C','Custom (mm below)']];
+var FG=[['Portal control',[['portalActive','Portal registration','s',[['on','ACTIVE – registration open'],['off','DEACTIVATED – registration closed']]],['autoApprove','Approval','s',[['manual','Manual – certificate only after I approve'],['auto','Automatic – certificate issued instantly']]],['fileName','Download file name ({name} {id} {event})']]],
+['Portal (header)',[['portalTitle','Portal title'],['portalSub','Portal subtitle'],['img:logoPortal','Portal logo (header only)']]],
+['Footer & voice',[['footerThanks','Thank-you message'],['footerCopy','Copyright text ({year} = current year)'],['voiceUrl','Voice audio link (optional, .mp3)']]]];
+var FE=[['Certificate text',[['name','Event name (inside admin & registration list)'],['active','Open for registration','s',[['on','Yes'],['off','No']]],['heading','Heading'],['intro','Line above name'],['pre','Line before event'],['event','Certificate / event title'],['org','Organised-by line'],['note','Recognition note','a'],['dateLabel','Date label'],['dateText','Date (empty = student issue date)'],['placeLabel','Place label'],['placeText','Place']]],
+['Bengali text (বাংলা সংস্করণ)',[['heading_bn','Heading (বাংলা)'],['intro_bn','Line above name (বাংলা)'],['pre_bn','Line before event (বাংলা)'],['event_bn','Certificate / event title (বাংলা)'],['org_bn','Organised-by line (বাংলা)'],['note_bn','Recognition note (বাংলা)','a'],['dateLabel_bn','Date label (বাংলা)'],['placeLabel_bn','Place label (বাংলা)'],['placeText_bn','Place (বাংলা)']]],
+['Top logos (empty = none)',[['img:logoL','Left logo'],['img:logoC','Centre logo'],['img:logoR','Right logo']]],
+['Look, background & size',[['size','Paper size / orientation','s',SZ],['cw','Custom width (mm)'],['ch','Custom height (mm)'],
+ ['font','Font','s',[["'Noto Serif Bengali',Georgia,serif",'Serif (Bengali + English)'],["'Noto Sans Bengali',Arial,sans-serif",'Sans (Bengali + English)'],['Georgia,serif','Georgia'],['Arial,sans-serif','Arial'],["'Times New Roman',serif",'Times']]],
+ ['color','Name / accent colour','c'],['border','Border colour','c'],['borderStyle','Border style','s',[['double','Classic double'],['single','Single line'],['ornate','Ornate frame'],['modern','Modern side band'],['none','No border']]],
+ ['bgColor','Background colour','c'],['img:bgImage','Background image'],['bgFade','Background fade % (higher = lighter)'],
+ ['photoOn','Participant photo','s',[['off','Off'],['on','Ask for photo & show on certificate']]],['photoShape','Photo shape','s',[['round','Round'],['square','Square']]],['photoSize','Photo size (px)'],
+ ['qrPos','QR position','s',[['center','Centre, above signatures'],['tr','Top right'],['tl','Top left']]],['qrSize','QR size (px)']]],
+['Certificate ID',[['idPrefix','ID prefix (e.g. NSS)'],['idMode','ID type','s',[['serial','Serial (0001, 0002…)'],['random','Random code']]],['idStart','Serial start number'],['idDigits','Serial digits']]]];
+var S=JSON.parse(JSON.stringify(DEF));
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function img(u){return u?'<img src="'+u+'" alt="">':''}
+function api(a,d){d=d||{};d.action=a;d.pw=PW;return fetch(API,{method:'POST',body:JSON.stringify(d)}).then(function(r){return r.json()}).catch(function(){return{ok:false,error:'Cannot reach Google Sheet. Check: (1) API URL pasted correctly, (2) Deploy > Web app > Who has access = Anyone, (3) opened from https hosting (Netlify), not a chat preview.'}})}
+function load(m){return '<p><i class="sp"></i>'+m+'</p>'}
+function mig(o){var n=Object.assign(JSON.parse(JSON.stringify(DEF)),o||{});
+ if(!n.events||!n.events.length){var e={id:'e1',name:(o&&o.event)||'Event 1'};EVK.forEach(function(k){e[k]=(o&&o[k]!==undefined)?o[k]:JSON.parse(JSON.stringify(DEFE[k]))});n.events=[e]}n.events=n.events.map(function(e){return Object.assign(JSON.parse(JSON.stringify(DEFE)),e)});return n}
+function E(){return S.events[CE]||S.events[0]}
+function evOf(r){var v=S.events||[];return v.filter(function(e){return e.id===r.event})[0]||v.filter(function(e){return e.name===r.event})[0]||v[0]||{}}
+function tpl(r){return Object.assign({},DEFE,evOf(r))}
+function activeEv(){return S.events.filter(function(e){return e.active!=='off'})}
+function applyPortal(){$('hl').innerHTML=img(S.logoPortal);$('hT').textContent=S.portalTitle;$('hS').textContent=S.portalSub;document.title=S.portalTitle;
+ var on=S.portalActive!=='off';$('dot').className='dot'+(on?'':' off');$('pst').textContent=on?'Portal ACTIVE':'Registration CLOSED';$('closed').classList.toggle('hide',on);$('reg').disabled=!on;
+ var a=activeEv(),sel=$('evs'),cv=sel.value;sel.innerHTML=a.map(function(e){return '<option value="'+esc(e.id)+'">'+esc(e.name)+'</option>'}).join('');if(cv)sel.value=cv;$('evg').classList.toggle('hide',a.length<2);
+ var cur=a.filter(function(e){return e.id===sel.value})[0]||a[0]||{};$('phg').classList.toggle('hide',cur.photoOn!=='on');
+ $('fT').textContent=S.footerThanks;$('fC').textContent=(S.footerCopy||'').replace('{year}',new Date().getFullYear())}
+$('evs').onchange=applyPortal;
+function dims(T){var m=T.size=='C'?[+T.cw||297,+T.ch||210]:(SIZES[T.size]||[297,210]);return{w:m[0],h:m[1],pw:Math.round(m[0]*3.7795),ph:Math.round(m[1]*3.7795)}}
+function verifyURL(id){return location.href.split('#')[0].split('?')[0]+'?verify='+encodeURIComponent(id)}
+function certHTML(r,qid,lang){var S=tpl(r),bn=lang==='bn',L=function(k){return bn&&S[k+'_bn']?S[k+'_bn']:S[k]},nm=bn&&r.nameBn?r.nameBn:r.name,fnt=bn?"'Noto Serif Bengali',Georgia,serif":S.font,D=dims(S),u=Math.min(D.pw,D.ph)/794,ev=L('event'),q=(+S.qrSize||90)*u,bs=S.borderStyle,bd;
+ if(bs=='single')bd='border:'+4*u+'px solid '+S.border;else if(bs=='ornate')bd='border:'+6*u+'px solid '+S.border+';box-shadow:inset 0 0 0 '+4*u+'px #fff,inset 0 0 0 '+6.5*u+'px '+S.color;
+ else if(bs=='modern')bd='border:'+2*u+'px solid '+S.border+';border-left:'+24*u+'px solid '+S.color;else if(bs=='none')bd='border:0';else bd='border:'+8*u+'px double '+S.border;
+ var lg=(S.logoL||S.logoC||S.logoR)?'<div class="cl"><div>'+img(S.logoL)+'</div><div>'+img(S.logoC)+'</div><div>'+img(S.logoR)+'</div></div>':'';
+ var sg=(S.sigs||[]).map(function(g){return '<div><div class="sgi">'+img(g.img)+'</div><div class="sg">'+esc(bn&&g.t_bn?g.t_bn:g.t)+'</div><div style="font-size:.8em;color:#666">'+esc(bn&&g.s_bn?g.s_bn:g.s)+'</div></div>'}).join('');
+ var pos=S.qrPos=='tr'?'position:absolute;top:'+14*u+'px;right:'+18*u+'px;margin:0':S.qrPos=='tl'?'position:absolute;top:'+14*u+'px;left:'+18*u+'px;margin:0':'';
+ var ps=(+S.photoSize||90)*u,rad=S.photoShape=='round'?'50%':'6px',ph='';
+ if(S.photoOn==='on'&&r.photo)ph=r.photo==='PH'?'<div style="width:'+ps+'px;height:'+ps+'px;border-radius:'+rad+';background:#ddd;align-self:center;margin:.3em auto;font-size:.6em;display:flex;align-items:center;justify-content:center;color:#777">PHOTO</div>':'<img src="'+r.photo+'" style="width:'+ps+'px;height:'+ps+'px;object-fit:cover;border-radius:'+rad+';border:2px solid '+S.color+';align-self:center;margin:.3em auto">';
+ var dt=S.dateText||r.date,dp=(dt||S.placeText)?'<div style="display:flex;justify-content:space-between;gap:1em;font-size:.8em;margin-top:.9em;color:#333"><span>'+(dt?esc(L('dateLabel'))+': <b>'+esc(dt)+'</b>':'')+'</span><span>'+(S.placeText?esc(L('placeLabel'))+': <b>'+esc(L('placeText'))+'</b>':'')+'</span></div>':'';
+ return '<div class="cert" style="width:'+D.pw+'px;height:'+D.ph+'px;font-size:'+16*u+'px;font-family:'+fnt+';'+bd+';padding:'+22*u+'px;background:'+S.bgColor+'">'+
+ (S.bgImage?'<div style="position:absolute;inset:0;background:url('+S.bgImage+') center/cover;opacity:'+(1-(+S.bgFade||0)/100)+'"></div>':'')+'<div class="ci">'+lg+
+ '<div style="font-size:1.7em;font-weight:bold;letter-spacing:1px;margin:.2em 0">'+esc(L('heading'))+'</div><p style="font-style:italic;color:#555;margin-top:.4em">'+esc(L('intro'))+'</p>'+ph+
+ '<div style="font-size:2em;font-weight:bold;color:'+S.color+';border-bottom:1px solid #999;display:inline-block;align-self:center;padding:.05em .7em;margin:.3em 0">'+esc(nm)+'</div>'+
+ '<div style="font-size:.9em;line-height:1.6;color:#333"><p>'+esc(L('pre'))+'</p><p style="font-weight:bold;font-size:1.15em;margin:.3em 0">“'+esc(ev)+'”</p><p>'+esc(L('org'))+'</p><p style="font-size:.85em;color:#666;margin-top:.5em">'+esc(L('note'))+'</p></div>'+dp+
+ '<div class="qr" style="'+pos+'"><div id="'+qid+'" style="width:'+q+'px;height:'+q+'px"></div><span>'+esc(r.id)+'</span></div>'+(sg?'<div class="sgs">'+sg+'</div>':'')+'</div></div>'}
+function mkQR(r,id){try{new QRCode($(id),{text:verifyURL(r.id),width:200,height:200,correctLevel:QRCode.CorrectLevel.M})}catch(e){}}
+function show(r,t,act){CUR=r;CURT=t;CURA=act;var D=dims(tpl(r)),q='q'+(++qc),sc=Math.min(1,($(t).clientWidth||340)/D.pw);
+ $(t).innerHTML='<div class="rv" title="Tap to switch language" style="height:'+D.ph*sc+'px;overflow:hidden;border:1px solid var(--bd);border-radius:6px"><div style="width:'+D.pw+'px;transform:scale('+sc+');transform-origin:top left">'+certHTML(r,q,LANG)+'</div></div>'+
+ (act?'<div class="act">'+(act==1?'<button class="b" data-pdf="1">⬇ PDF</button><button class="b" data-jpg="1">⬇ JPG</button><button class="b bo" data-png="1">⬇ PNG</button>':'')+'<button class="b bo" data-lang="1">🌐 '+(LANG=='bn'?'Switch to English':'বাংলায় দেখুন')+'</button></div><p style="font-size:11px;color:var(--mu);margin-top:6px">Tap the certificate to switch English ⇄ বাংলা. Downloads use the language shown.</p>':'');mkQR(r,q)}
+function togLang(){LANG=LANG=='bn'?'en':'bn';if(CUR&&CURT)show(CUR,CURT,CURA)}
+function snap(r,lang){$('pa').innerHTML=certHTML(r,'xq',lang||LANG);mkQR(r,'xq');var f=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
+ return f.then(function(){return new Promise(function(ok){setTimeout(function(){html2canvas($('pa').firstChild,{scale:2,useCORS:true,backgroundColor:'#fff'}).then(ok)},300)})})}
+function newPdf(D){return new jspdf.jsPDF({orientation:D.w>=D.h?'l':'p',unit:'mm',format:[D.w,D.h]})}
+function fname(r){return (S.fileName||'{name}-{id}').replace('{name}',r.name).replace('{id}',r.id).replace('{event}',tpl(r).event).replace(/[\\\/:*?"<>|]+/g,'_').trim()}
+function dl(u,n){var a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove()}
+document.addEventListener('click',function(e){var d=e.target.dataset;if(!CUR)return;if(d.lang||(e.target.closest&&e.target.closest('.rv'))){togLang();return}var r=CUR;
+ if(d.pdf)snap(r).then(function(c){var D=dims(tpl(r)),p=newPdf(D);p.addImage(c.toDataURL('image/jpeg',.95),'JPEG',0,0,D.w,D.h);p.save(fname(r)+'.pdf')});
+ if(d.jpg)snap(r).then(function(c){dl(c.toDataURL('image/jpeg',.95),fname(r)+'.jpg')});
+ if(d.png)snap(r).then(function(c){dl(c.toDataURL('image/png'),fname(r)+'.png')})});
+/* portal */
+function tab(n){[1,2,3].forEach(function(i){$('v'+i).classList.toggle('hide',i!=n);$('t'+i).classList.toggle('on',i==n)});$('out').innerHTML='';stopScan()}
+$('t1').onclick=function(){tab(1)};$('t2').onclick=function(){tab(2)};$('t3').onclick=function(){tab(3)};
+$('nP').onclick=function(){$('portal').classList.remove('hide');$('admin').classList.add('hide')};
+$('nA').onclick=function(){$('admin').classList.remove('hide');$('portal').classList.add('hide')};
+function handle(rec,t){if(rec.status==='Approved'){show(rec,t,true)}
+ else if(rec.status==='Rejected')$(t).innerHTML='<div class="bad">Your registration was not approved. Please contact the organisers.</div>';
+ else $(t).innerHTML='<div class="wait">✔ Registration received for <b>'+esc(rec.name)+'</b>. Your certificate will be available after admin approval. Come back to the <b>Retrieve</b> tab with your mobile number later.</div>'}
+function readImg(f,cb,mw,type){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var sc=Math.min(1,(mw||320)/im.width),c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;var x=c.getContext('2d');if(type=='jpeg'){x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height)}x.drawImage(im,0,0,c.width,c.height);cb(c.toDataURL(type=='jpeg'?'image/jpeg':'image/png',.75))};im.src=fr.result};fr.readAsDataURL(f)}
+$('ph').onchange=function(){var f=this.files[0];PHT=null;if(f)readImg(f,function(u){PHT=u},220,'jpeg')};
+$('reg').onclick=function(){var n=$('nm').value.trim().replace(/\s+/g,' '),m=$('mb').value.trim(),a=activeEv();
+ if(!a.length){$('e1').textContent='No certificate is open for registration right now.';return}
+ if(n.length<3||!/^[A-Za-z\u0980-\u09FF .'-]+$/.test(n)){$('e1').textContent='Enter your full name (English or বাংলা letters).';return}
+ if(!/^[6-9][0-9]{9}$/.test(m)){$('e1').textContent='Enter a valid 10-digit mobile number starting with 6–9.';return}
+ var eid=$('evs').value||a[0].id,ev=a.filter(function(e){return e.id===eid})[0]||a[0];
+ $('e1').innerHTML=load('Please wait…');api('register',{name:n,mobile:m,eventId:ev.id,nameBn:$('nmb').value.trim(),photo:ev.photoOn==='on'?PHT:''}).then(function(r){if(!r.ok){$('e1').textContent=r.error;return}$('e1').textContent='';handle(r.rec,'out')})};
+$('ret').onclick=function(){$('e2').innerHTML=load('Searching…');api('retrieve',{mobile:$('rm').value.trim()}).then(function(r){if(!r.rec){$('e2').textContent='No registration found for this number.';$('out').innerHTML='';return}$('e2').textContent='';handle(r.rec,'out')})};
+function doVerify(q){$('vr').innerHTML=load('Checking…');$('vout').innerHTML='';api('verify',{q:q}).then(function(r){
+ if(!r.rec){$('vr').innerHTML='<div class="bad">✖ Certificate not found / not approved – INVALID</div>';return}
+ $('vr').innerHTML='<div class="ok">✔ VALID CERTIFICATE</div><p><b>Name:</b> '+esc(r.rec.name)+'<br><b>ID:</b> '+esc(r.rec.id)+'<br><b>Event:</b> '+esc(tpl(r.rec).event)+'<br><b>Issued:</b> '+esc(r.rec.date)+'</p>';show(r.rec,'vout',2)})}
+$('vbtn').onclick=function(){var q=$('vq').value.trim();if(q)doVerify(q)};
+var stream,scanning=false;
+function stopScan(){scanning=false;if(stream)stream.getTracks().forEach(function(t){t.stop()});stream=null;$('vid').classList.add('hide');$('stopscan').classList.add('hide')}
+$('stopscan').onclick=stopScan;
+$('scan').onclick=function(){$('e4').textContent='';navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(s){stream=s;var v=$('vid');v.srcObject=s;v.setAttribute('playsinline',true);v.classList.remove('hide');$('stopscan').classList.remove('hide');return v.play()}).then(function(){scanning=true;tick()}).catch(function(){$('e4').textContent='Camera not available or permission denied (HTTPS needed).'})};
+function tick(){if(!scanning)return;var v=$('vid');if(v.readyState===4&&v.videoWidth){var c=$('cv'),x=c.getContext('2d');c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);var im=x.getImageData(0,0,c.width,c.height),code=jsQR(im.data,im.width,im.height);
+ if(code&&code.data){stopScan();var m=code.data.match(/verify=([^&\s]+)/);doVerify(m?decodeURIComponent(m[1]):code.data);return}}requestAnimationFrame(tick)}
+$('voice').onclick=function(){var u=S.voiceData||S.voiceUrl;if(u){new Audio(u).play().catch(function(){alert('Audio could not be played.')});return}
+ if(!window.speechSynthesis)return;var t=new SpeechSynthesisUtterance(S.footerThanks);t.lang=/[\u0980-\u09FF]/.test(S.footerThanks)?'bn-IN':'en-IN';speechSynthesis.cancel();speechSynthesis.speak(t)};
+/* admin form */
+function pv(){show({id:(E().idPrefix?E().idPrefix+'-':'')+new Date().getFullYear()+'-0001',name:'Student Name',date:new Date().toLocaleDateString('en-GB'),photo:'PH',nameBn:'শিক্ষার্থীর নাম',event:E().id},'pv',2)}
+function fld(g,src,pre){var h='<details'+(g[0]=='Portal control'||g[0]=='Certificate text'?' open':'')+'><summary>'+g[0]+'</summary><div style="margin-top:12px">';
+ g[1].forEach(function(f){var k=f[0],t=f[2]||'t';
+  if(k.indexOf('img:')==0){k=k.slice(4);h+='<div class="g"><label>'+f[1].toUpperCase()+'</label><div class="im">'+img(src[k])+'<input type="file" accept="image/*" data-'+pre+'i="'+k+'"><button class="b bo" data-'+pre+'x="'+k+'">Remove</button></div></div>';return}
+  h+='<div class="g"><label>'+f[1].toUpperCase()+'</label>';
+  if(t=='c')h+='<input type="color" data-'+pre+'k="'+k+'" value="'+src[k]+'" style="height:44px;padding:2px">';
+  else if(t=='s')h+='<select data-'+pre+'k="'+k+'">'+f[3].map(function(o){return '<option value="'+esc(o[0])+'"'+(src[k]==o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select>';
+  else if(t=='a')h+='<textarea rows="2" data-'+pre+'k="'+k+'">'+esc(src[k])+'</textarea>';
+  else h+='<input data-'+pre+'k="'+k+'" value="'+esc(src[k])+'">';h+='</div>'});return h+'</div></details>'}
+function buildForm(){var h='<h2 style="font-size:14px;margin-bottom:8px">Portal settings</h2>',ev=E();FG.forEach(function(g){h+=fld(g,S,'')});
+ h+='<details open><summary>Voice message (your own voice)</summary><div style="margin-top:12px"><p class="s">Record a short thank-you in your own voice (max 25 seconds). Visitors hear it from the footer button.</p><div class="act" style="margin:0 0 8px"><button class="b" id="rec">● Record</button><button class="b bo" id="recx">Delete voice</button></div><p id="recs" class="s">'+(S.voiceData?'Voice message saved ✔ (press Save Changes to publish)':'No recording yet')+'</p>'+(S.voiceData?'<audio controls src="'+S.voiceData+'" style="width:100%"></audio>':'')+'</div></details>';
+ h+='<h2 style="font-size:14px;margin:18px 0 8px">Certificates / Events</h2><div class="g"><label>EDITING EVENT</label><select id="evsel">'+S.events.map(function(e,i){return '<option value="'+i+'"'+(i==CE?' selected':'')+'>'+esc(e.name)+'</option>'}).join('')+'</select></div>'+
+ '<div class="act" style="margin:0 0 12px"><button class="b" id="evnew">+ New event</button><button class="b bo" id="evdup">Duplicate</button><button class="b bo" id="evdel">Delete</button></div>';
+ FE.forEach(function(g){h+=fld(g,ev,'e')});
+ h+='<details><summary>Signatures (add as many as you want)</summary><div style="margin-top:12px">';
+ (ev.sigs||[]).forEach(function(g,n){h+='<div class="sgb"><div class="g"><label>TITLE</label><input data-st="'+n+'" value="'+esc(g.t)+'"></div><div class="g"><label>SUB-LINE</label><input data-ss="'+n+'" value="'+esc(g.s)+'"></div><div class="g"><label>TITLE (বাংলা)</label><input data-stb="'+n+'" value="'+esc(g.t_bn||'')+'"></div><div class="g"><label>SUB-LINE (বাংলা)</label><input data-ssb="'+n+'" value="'+esc(g.s_bn||'')+'"></div><div class="im">'+img(g.img)+'<input type="file" accept="image/*" data-si="'+n+'"><button class="b bo" data-sx="'+n+'">Remove image</button></div><div class="act"><button class="b bo" data-sr="'+n+'">Delete this signature</button></div></div>'});
+ h+='<button class="b" id="addsig">+ Add Signature</button></div></details>';$('form').innerHTML=h}
+function ref(){buildForm();applyPortal();pv()}
+$('form').addEventListener('input',function(e){var d=e.target.dataset,v=e.target.value;
+ if(d.k)S[d.k]=v;else if(d.ek){E()[d.ek]=v;if(d.ek=='name'){var o=$('evsel').options[CE];if(o)o.textContent=v}}else if(d.st!==undefined)E().sigs[+d.st].t=v;else if(d.ss!==undefined)E().sigs[+d.ss].s=v;else if(d.stb!==undefined)E().sigs[+d.stb].t_bn=v;else if(d.ssb!==undefined)E().sigs[+d.ssb].s_bn=v;else return;applyPortal();pv()});
+$('form').addEventListener('change',function(e){var d=e.target.dataset,f=e.target.files&&e.target.files[0],v=e.target.value;
+ if(e.target.id=='evsel'){CE=+v;ref();return}
+ if(d.k){S[d.k]=v;applyPortal();pv()}if(d.ek){E()[d.ek]=v;applyPortal();pv()}
+ var bg=(d.ii||d.i)=='bgImage';
+ if(d.i&&f)readImg(f,function(u){S[d.i]=u;ref()});
+ if(d.ei&&f)readImg(f,function(u){E()[d.ei]=u;ref()},d.ei=='bgImage'?1100:320,d.ei=='bgImage'?'jpeg':'png');
+ if(d.si!==undefined&&f)readImg(f,function(u){E().sigs[+d.si].img=u;ref()})});
+var MR=null,RC=[];
+$('form').addEventListener('click',function(e){var d=e.target.dataset,id=e.target.id;
+ if(d.x){S[d.x]='';ref()}if(d.ex){E()[d.ex]='';ref()}if(d.sx!==undefined){E().sigs[+d.sx].img='';ref()}if(d.sr!==undefined){E().sigs.splice(+d.sr,1);ref()}
+ if(id==='addsig'){E().sigs=E().sigs||[];E().sigs.push({t:'NEW SIGNATORY',s:'',img:''});ref()}
+ if(id==='evnew'){var n=JSON.parse(JSON.stringify(DEFE));n.id='e'+Date.now();n.name='New event';n.sigs=JSON.parse(JSON.stringify(DEFE.sigs));S.events.push(n);CE=S.events.length-1;ref()}
+ if(id==='evdup'){var c=JSON.parse(JSON.stringify(E()));c.id='e'+Date.now();c.name+=' (copy)';S.events.push(c);CE=S.events.length-1;ref()}
+ if(id==='evdel'){if(S.events.length<2)return alert('At least one event is required.');if(confirm('Delete this event template? (Old certificates will use the first event.)')){S.events.splice(CE,1);CE=0;ref()}}
+ if(id==='recx'){S.voiceData='';ref()}
+ if(id==='rec'){if(MR&&MR.state=='recording'){MR.stop();return}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){RC=[];MR=new MediaRecorder(st,{audioBitsPerSecond:24000});MR.ondataavailable=function(x){RC.push(x.data)};
+   MR.onstop=function(){st.getTracks().forEach(function(t){t.stop()});var fr=new FileReader();fr.onload=function(){S.voiceData=fr.result;$('rec').textContent='● Record';ref()};fr.readAsDataURL(new Blob(RC,{type:MR.mimeType}))};
+   MR.start();$('rec').textContent='■ Stop recording';$('recs').textContent='Recording… speak now';setTimeout(function(){if(MR&&MR.state=='recording')MR.stop()},25000)}).catch(function(){alert('Microphone not available or permission denied.')})}});
+$('sv').onclick=function(){$('sv').textContent='Saving…';api('saveSettings',{settings:S}).then(function(r){$('sv').textContent='Save Changes (to Google Sheet)';alert(r.ok?'Saved. Visible on all devices now.':'Error: '+r.error)})};
+$('bn').onclick=function(){if(confirm('Fill the Bengali text boxes of this event with sample Bengali text?')){Object.assign(E(),BNF);(E().sigs||[]).forEach(function(g,i){if(SBN[i]){g.t_bn=SBN[i][0];g.s_bn=SBN[i][1]}});ref()}};
+$('rs').onclick=function(){if(confirm('Reset ALL settings and events to default?')){S=JSON.parse(JSON.stringify(DEF));CE=0;ref()}};
+function sw(p){$('pS').classList.toggle('hide',p!='S');$('pR').classList.toggle('hide',p!='R');$('tabS').className='b'+(p=='S'?'':' bo');$('tabR').className='b'+(p=='R'?'':' bo');if(p=='R')list();else pv()}
+$('tabS').onclick=function(){sw('S')};$('tabR').onclick=function(){sw('R')};
+$('login').onclick=function(){if(API.indexOf('PASTE')==0){$('e3').textContent='API URL not set yet. Paste your Apps Script URL in the API line of the HTML file, then upload it again.';return}PW=$('pw').value;$('e3').innerHTML=load('Checking…');api('login').then(function(r){if(r.ok){$('lg').classList.add('hide');$('dash').classList.remove('hide');$('e3').textContent='';buildForm();pv()}else{PW='';$('e3').textContent=r.error||'Incorrect password.'}})};
+$('lo').onclick=function(){PW='';$('dash').classList.add('hide');$('lg').classList.remove('hide');$('pw').value=''};
+$('chpw').onclick=function(){var n=prompt('New password (min 3 characters):');if(n)api('chpw',{newpw:n}).then(function(r){if(r.ok){PW=n;alert('Password changed.')}else alert(r.error)})};
+/* records */
+function list(){$('cnt').innerHTML=load('Loading…');api('list').then(function(r){RECS=r.records||[];var p=RECS.filter(function(x){return x.status=='Pending'}).length;$('cnt').textContent=RECS.length+' registration(s) • '+p+' pending approval';
+ $('tb').innerHTML=RECS.map(function(x,i){return '<tr><td>'+esc(x.id)+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.mobile)+'</td><td>'+esc(evOf(x).name)+'</td><td>'+esc(x.date)+'</td><td><span class="st '+x.status+'">'+x.status+'</span></td><td><button class="b bo" data-v="'+i+'">View</button> '+(x.status!='Approved'?'<button class="b" data-a="'+i+'">Approve</button> ':'')+(x.status=='Pending'?'<button class="b bo" data-r="'+i+'">Reject</button> ':'')+'<button class="b bo" data-e="'+i+'">Edit</button> <button class="b bo" data-p="'+i+'">Photo</button> <button class="b bo" data-d="'+i+'">Delete</button></td></tr>'}).join('')||'<tr><td colspan="7">No records yet.</td></tr>'})}
+$('pf').onchange=function(){var f=this.files[0];if(f&&PI!==null)readImg(f,function(u){api('edit',{id:RECS[PI].id,photo:u}).then(list)},220,'jpeg')};
+$('tb').onclick=function(e){var d=e.target.dataset,x;
+ if(d.v!==undefined)show(RECS[+d.v],'aout',true);
+ if(d.a!==undefined)api('approve',{ids:[RECS[+d.a].id]}).then(list);
+ if(d.r!==undefined)api('reject',{ids:[RECS[+d.r].id]}).then(list);
+ if(d.p!==undefined){PI=+d.p;$('pf').click()}
+ if(d.e!==undefined){x=RECS[+d.e];var n=prompt('Name:',x.name);if(n){var m=prompt('Mobile:',x.mobile),b=prompt('Name in Bengali (optional):',x.nameBn||'');api('edit',{id:x.id,name:n,mobile:m||x.mobile,nameBn:b||''}).then(list)}}
+ if(d.d!==undefined&&confirm('Delete this record?'))api('del',{id:RECS[+d.d].id}).then(function(){$('aout').innerHTML='';list()})};
+$('addst').onclick=function(){var n=prompt('Student full name:');if(!n)return;var m=prompt('10-digit mobile number:');if(!m)return;api('register',{name:n,mobile:m,admin:true,eventId:E().id}).then(function(r){if(!r.ok)alert(r.error);list()})};
+$('apall').onclick=function(){api('approve',{ids:'all'}).then(list)};
+function batch(fn,done){var i=0;(function nx(){if(i>=RECS.length){done();$('prog').textContent='Done.';return}$('prog').textContent='Preparing '+(i+1)+' / '+RECS.length+'…';snap(RECS[i],$('bl').value).then(function(c){return fn(RECS[i],c,i)}).then(function(){i++;nx()})})()}
+$('pall').onclick=function(){if(!RECS.length)return alert('No records.');var p=null;batch(function(r,c,i){var D=dims(tpl(r));if(!p)p=newPdf(D);else p.addPage([D.w,D.h],D.w>=D.h?'l':'p');p.addImage(c.toDataURL('image/jpeg',.9),'JPEG',0,0,D.w,D.h)},function(){p.save('All-Certificates.pdf')})};
+$('zip').onclick=function(){if(!RECS.length)return alert('No records.');var z=new JSZip(),f=$('zf').value;
+ batch(function(r,c){var n=fname(r),D=dims(tpl(r));if(f=='pdf'){var p=newPdf(D);p.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,D.w,D.h);z.file(n+'.pdf',p.output('blob'))}else z.file(n+'.'+f,c.toDataURL(f=='jpg'?'image/jpeg':'image/png',.92).split(',')[1],{base64:true})},
+ function(){z.generateAsync({type:'blob'}).then(function(b){dl(URL.createObjectURL(b),'Certificates-'+f.toUpperCase()+'.zip')})})};
+function rows(){return RECS.map(function(r){return{ID:r.id,Name:r.name,Mobile:r.mobile,Event:evOf(r).name,Date:r.date,Status:r.status}})}
+$('xls').onclick=function(){var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows()),'Certificates');XLSX.writeFile(wb,'Certificates.xlsx')};
+$('csv').onclick=function(){var t=XLSX.utils.sheet_to_csv(XLSX.utils.json_to_sheet(rows()));dl(URL.createObjectURL(new Blob(['\ufeff'+t],{type:'text/csv'})),'Certificates.csv')};
+$('clr').onclick=function(){if(confirm('Delete ALL records?'))api('clear').then(function(){$('aout').innerHTML='';list()})};
+$('tpl').onclick=function(){var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Name','Mobile'],['Sample Student','9876543210']]),'Students');XLSX.writeFile(wb,'import-template.xlsx')};
+$('imf').onchange=function(){var f=this.files[0];if(!f)return;this.value='';var fr=new FileReader();fr.onload=function(){var wb=XLSX.read(fr.result,{type:'array'}),js=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''}),list0=[];
+ js.forEach(function(r){var n='',m='';Object.keys(r).forEach(function(k){var l=k.toLowerCase().trim();if(/name|নাম/.test(l))n=String(r[k]).trim();if(/mobile|phone|mob|মোবাইল/.test(l))m=String(r[k]).replace(/\D/g,'').slice(-10)});if(n&&m)list0.push({n:n,m:m})});
+ if(!list0.length)return alert('No rows found. Use columns: Name, Mobile.');if(!confirm('Import '+list0.length+' students into event “'+E().name+'” (auto-approved)?'))return;
+ var i=0,ok=0,bad=[];(function nx(){if(i>=list0.length){$('prog').textContent='Import done: '+ok+' added, '+bad.length+' skipped'+(bad.length?' ('+bad.slice(0,5).join('; ')+(bad.length>5?'…':'')+')':'');list();return}
+  $('prog').textContent='Importing '+(i+1)+' / '+list0.length+'…';api('register',{name:list0[i].n,mobile:list0[i].m,admin:true,eventId:E().id}).then(function(r){if(r.ok)ok++;else bad.push(list0[i].n+': '+r.error);i++;nx()})})()};fr.readAsArrayBuffer(f)};
+/* start */
+applyPortal();
+if(API.indexOf('PASTE')==0)$('cfgerr').classList.remove('hide');
+else api('getSettings').then(function(r){S=mig(r.settings);applyPortal();
+ var v=new URLSearchParams(location.search).get('verify');if(v){tab(3);$('vq').value=v;doVerify(v)}});
+</script>
+</body>
+</html>
